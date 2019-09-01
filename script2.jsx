@@ -1,10 +1,37 @@
 
- 
+class DeletedItem extends React.Component {
+
+    render() { 
+        let todo = this.props.deleted;
+
+        return (
+            <li>
+                {todo.task}, {todo.time}
+            </li>
+        );
+    }
+}
+
+class TodoItem extends React.Component {
+
+    deleteItem () {
+        this.props.deleteItem();
+    }
+    render() { 
+        let i = this.props.index;
+        let todo = this.props.todo;
+
+        return (
+            <li >
+                {todo.task}, {todo.time}
+                <button onClick={(event)=>{this.deleteItem(event, i)}}>DELETE</button>
+            </li>
+        );
+    }
+}
+
 class Form extends React.Component {
-    // constructor() {
-    //     super();
-    //     this.state = {  }
-    // }
+
     getInput (event) {
         let input = event.target.value;
         this.props.getInput(input);
@@ -22,38 +49,13 @@ class Form extends React.Component {
     }
 }
 
-class TodoItem extends React.Component {
-    // constructor() {
-    //     super();
-    //     this.state = {  }
-    // }
-    deleteItem () {
-        console.log('hello');
-        this.props.deleteItem();
-    }
-    render() { 
-        let list = this.props.list.map( (todo,i)=> {
-            return(
-                <li key={i}>{todo.task}, {todo.time}
-                  <button onClick={(event)=>{this.deleteItem(event, i)}}>DELETE</button>
-                </li>
-            )
-        });
-        return (
-            <div>
-                {list}
-            </div>
-        );
-    }
-}
-
 class ItemList extends React.Component {
     constructor(){
       super()
-  
       this.state = {
-        word:"",
-        list : []
+        word : "",
+        list : [],
+        deleted : []
       }
       this.changeHandler = this.changeHandler.bind(this);
       this.addItem = this.addItem.bind(this);
@@ -79,18 +81,41 @@ class ItemList extends React.Component {
       this.setState(newList);
     }
   
-    deleteItem(event, i){
+    deleteItem(i){
       let list = this.state.list;
-      list.splice(i, 1);
-      this.setState({list: list})
+      let deleted = this.state.deleted;
+      let deletedTodo = list.splice(i, 1);
+      deleted.push(deletedTodo[0]);
+      this.setState({list: list, deleted: deleted})
     }
   
     render() {
-        console.log("rendering");
+        console.log(this.state.deleted)
+        let list = this.state.list.map( (todo,i)=> {
+            return(
+                <TodoItem todo={todo} key={i} index={i} deleteItem={this.deleteItem} />
+            )
+        });
+
+        let deleted = this.state.deleted.map( (todo,i)=> {
+            return(
+                <DeletedItem deleted={todo} key={i} index={i} />
+            )
+        })
+
         return (
           <div >
             <Form getInput={this.changeHandler} addItem={this.addItem} word={this.state.word} />
-            <TodoItem list={this.state.list} deleteItem={this.deleteItem}/>
+            <div>
+                <ul>
+                    Todo List: {list}
+                </ul>
+            </div>
+            <div>
+                <ul>
+                    Deleted List: {deleted}
+                </ul>
+            </div>
           </div>
         );
     }
@@ -103,7 +128,7 @@ class ItemList extends React.Component {
   
   
   
-  
+
   // <input onChange={(event)=>{this.changeHandler(event)}} value={this.state.word}/>
   
   // inputHandler(event){
