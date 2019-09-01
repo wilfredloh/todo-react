@@ -80,18 +80,6 @@ class List extends React.Component {
   }
 }
 
-class  extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {  }
-  }
-  render() { 
-    return (  );
-  }
-}
- 
-export default ;
-
 
 ReactDOM.render(
     <List/>,
